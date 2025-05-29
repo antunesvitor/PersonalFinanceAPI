@@ -1,4 +1,5 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using PersonalFinanceAPI.Data;
 using PersonalFinanceAPI.Models;
 
@@ -15,7 +16,7 @@ public class GroupService(AppDbContext context)
     }
 
     public async Task<Group> GetGroup(int id){
-        var group = _context.Groups.FirstOrDefault(g => g.Id == id);
+        var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == id);
 
         return group;
     }
