@@ -10,5 +10,5 @@ public class Group
     [MaxLength(100)]
     public string Name { get; set; }
 
-    public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+    public ICollection<Expense> Expenses { get; set; } = [];
 }

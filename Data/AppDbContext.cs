@@ -28,6 +28,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.Property(e => e.Date);
 
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(100);
+
             entity.HasOne(e => e.Group)
                 .WithMany(e => e.Expenses)
                 .HasForeignKey(e =>e.GroupID)
