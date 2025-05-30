@@ -26,8 +26,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
 
-            entity.Property(e => e.Date)
-                .IsRequired();
+            entity.Property(e => e.Date);
 
             entity.HasOne(e => e.Group)
                 .WithMany(e => e.Expenses)
