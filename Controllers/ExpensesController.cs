@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PersonalFinanceAPI.DTOs;
 using PersonalFinanceAPI.Models;
 using PersonalFinanceAPI.Services;
 
@@ -12,13 +13,13 @@ namespace PersonalFinanceAPI.Controllers
         private readonly ExpenseService _service = service;
         
         [HttpGet]
-        public async Task<Expense[]> GetGroups()
+        public async Task<ExpenseDTO[]> GetGroups()
         {
             return await _service.GetExpenses();
         }
 
         [HttpGet("{id:int}")]
-        public async Task<Expense> GetGroup(int id)
+        public async Task<ExpenseDTO> GetGroup(int id)
         {
             return await _service.GetExpense(id);
         }
