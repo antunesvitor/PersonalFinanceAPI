@@ -21,6 +21,15 @@ public class ExpenseService(AppDbContext context)
         return newExpense;
     }
 
+        public async Task<Expense[]> AddManyExpenses(CreateExpenseRequest[] request)
+    {
+        var expenses = request.Select(x => new Expense(x)).ToArray();
+
+        _context.AddRange(expenses);
+        await _context.SaveChangesAsync();
+        return expenses;
+    }
+
     public async Task<ExpenseResponse?> GetExpense(int id)
     {
         var expense = await _context.Expenses

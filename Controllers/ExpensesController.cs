@@ -30,5 +30,12 @@ namespace PersonalFinanceAPI.Controllers
             var expenseDB = await _service.AddExpense(expense);
             return expenseDB;
         }
+
+        [HttpPost("add-many")]
+        public async Task<Expense[]> AddExpenses([FromBody] CreateExpenseRequest[] expenses)
+        {
+            var expensesDB = await _service.AddManyExpenses(expenses);
+            return expensesDB;
+        }
     }
 }

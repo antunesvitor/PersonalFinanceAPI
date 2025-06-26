@@ -23,5 +23,5 @@ public class Expense
         this.GroupID = request.GroupId;
     }
 
-    public Expense() {}
+    public Expense()  {}
 }
