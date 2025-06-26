@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PersonalFinanceAPI.Data;
 using PersonalFinanceAPI.DTOs;
@@ -11,28 +12,28 @@ public class ExpenseService(AppDbContext context)
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<Expense> AddExpense(Expense expense)
+    public async Task<Expense> AddExpense(CreateExpenseRequest request)
     {
-        expense.Date ??= DateTime.Now;
+        var newExpense = new Expense(request);
 
-        _context.Add(expense);
+        _context.Add(newExpense);
         await _context.SaveChangesAsync();
-        return expense;
+        return newExpense;
     }
 
-    public async Task<ExpenseDTO?> GetExpense(int id)
+    public async Task<ExpenseResponse?> GetExpense(int id)
     {
         var expense = await _context.Expenses
             .Include(x => x.Group)
-            .FirstOrDefaultAsync(e => e.Id == id);
+            .FirstOrDefaultAsync(x=> x.Id == id);
 
-        return expense is not null ? new ExpenseDTO(expense) : null;
+        return expense is not null ? new  ExpenseResponse(expense) : null;
     }
 
-    public async Task<ExpenseDTO[]> GetExpenses()
+    public async Task<ExpenseResponse[]> GetExpenses()
     {
         var expenses = _context.Expenses.Include(x => x.Group).ToArray();
-        var expensesDTO = expenses.Select(x => new ExpenseDTO(x)).ToArray();
+        var expensesDTO = expenses.Select(x => new ExpenseResponse(x)).ToArray();
 
         return expensesDTO;
     }

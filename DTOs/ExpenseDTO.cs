@@ -1,13 +1,45 @@
 using System;
+using System.Data;
 using System.Text.RegularExpressions;
 using PersonalFinanceAPI.Models;
 
 namespace PersonalFinanceAPI.DTOs;
 
-public class ExpenseDTO(Expense expense)
+// Response DTOs - what gets returned to clients
+public record ExpenseResponse(
+    int Id,
+    decimal Value,
+    DateTime Date,
+    string Description,
+    int GroupId,
+    string GroupName
+)
 {
-    public int Id { get; set; } = expense.Id;
-    public decimal Value { get; set; } = expense.Value;
-    public DateTime? DateTime { get; set; } = expense.Date;
-    public string? GroupName { get; set; } = expense.Group?.Name;
+    public ExpenseResponse(Expense expense)
+        : this (
+            expense.Id, 
+            expense.Value, 
+            expense.Date ?? DateTime.Now, 
+            expense.Description,
+            expense.GroupID, 
+            expense.Group?.Name ?? "-")
+    { }
 }
+
+
+// Request DTOs - what clients send
+public record CreateExpenseRequest(
+    decimal Value,
+    DateTime? Date,
+    int GroupId,
+    string Description
+)
+{
+      public DateTime EffectiveDate => Date ?? DateTime.Now;
+}
+
+public record UpdateExpenseRequest(
+    decimal Value,
+    DateTime Date,
+    int GroupId
+);

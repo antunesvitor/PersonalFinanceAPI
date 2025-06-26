@@ -13,19 +13,19 @@ namespace PersonalFinanceAPI.Controllers
         private readonly ExpenseService _service = service;
         
         [HttpGet]
-        public async Task<ExpenseDTO[]> GetGroups()
+        public async Task<ExpenseResponse[]> GetGroups()
         {
             return await _service.GetExpenses();
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ExpenseDTO> GetGroup(int id)
+        public async Task<ExpenseResponse> GetGroup(int id)
         {
             return await _service.GetExpense(id);
         }
 
         [HttpPost()]
-        public async Task<Expense> AddExpense([FromBody] Expense expense)
+        public async Task<Expense> AddExpense([FromBody] CreateExpenseRequest expense)
         {
             var expenseDB = await _service.AddExpense(expense);
             return expenseDB;
