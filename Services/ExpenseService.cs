@@ -21,7 +21,7 @@ public class ExpenseService(AppDbContext context)
         return newExpense;
     }
 
-        public async Task<Expense[]> AddManyExpenses(CreateExpenseRequest[] request)
+    public async Task<Expense[]> AddManyExpenses(CreateExpenseRequest[] request)
     {
         var expenses = request.Select(x => new Expense(x)).ToArray();
 
@@ -34,9 +34,9 @@ public class ExpenseService(AppDbContext context)
     {
         var expense = await _context.Expenses
             .Include(x => x.Group)
-            .FirstOrDefaultAsync(x=> x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id);
 
-        return expense is not null ? new  ExpenseResponse(expense) : null;
+        return expense is not null ? new ExpenseResponse(expense) : null;
     }
 
     public async Task<ExpenseResponse[]> GetExpenses()
@@ -45,5 +45,24 @@ public class ExpenseService(AppDbContext context)
         var expensesDTO = expenses.Select(x => new ExpenseResponse(x)).ToArray();
 
         return expensesDTO;
+    }
+
+    public async Task<bool> DeleteExpenseById(int id)
+    {
+        int rowsAffected = await _context.Expenses.Where(x => x.Id == id).ExecuteDeleteAsync();
+
+        return rowsAffected > 0;
+    }
+
+    public async Task<bool> DeleteAll()
+    {
+        #if DEBUG
+            // Only allow in development
+            int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
+
+            return rowsAffected > 0;
+        #else
+            throw new InvalidOperationException("Bulk delete not allowed in production");
+        #endif
     }
 }

@@ -37,5 +37,20 @@ namespace PersonalFinanceAPI.Controllers
             var expensesDB = await _service.AddManyExpenses(expenses);
             return expensesDB;
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IResult> DeleteExpense(int id)
+        {
+            var success = await _service.DeleteExpenseById(id);
+            return success ? Results.Ok(): Results.NotFound("Record not found");
+        }
+
+
+        [HttpDelete()]
+        public async Task<IResult> DeleteAllExpenses()
+        {
+            var success = await _service.DeleteAll();
+            return success ? Results.Ok(): Results.NotFound("There is no record in database");
+        }
     }
 }
