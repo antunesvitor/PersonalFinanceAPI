@@ -7,9 +7,10 @@ using PersonalFinanceAPI.Models;
 
 namespace PersonalFinanceAPI.Services;
 
-public class ExpenseService(AppDbContext context)
+public class ExpenseService(AppDbContext context, GroupService groupService)
 {
     private readonly AppDbContext _context = context;
+    private readonly GroupService groupService = groupService;
 
     public async Task<Expense> AddExpense(CreateExpenseRequest request)
     {
@@ -49,6 +50,20 @@ public class ExpenseService(AppDbContext context)
     public async Task<bool> DeleteExpenseById(int id)
     {
         int rowsAffected = await _context.Expenses.Where(x => x.Id == id).ExecuteDeleteAsync();
+
+        return rowsAffected > 0;
+    }
+
+    public async Task<bool> AddExpenseToGroup(int expenseId, int groupId)
+    {
+        var expenseDb = await _context.Expenses.FirstOrDefaultAsync(x => x.Id == expenseId);
+        var group = await this.groupService.GetGroup(groupId);
+
+        if (expenseDb is null || group is null) return false;
+
+        expenseDb.GroupID = groupId;
+        
+        int rowsAffected = await _context.SaveChangesAsync();
 
         return rowsAffected > 0;
     }

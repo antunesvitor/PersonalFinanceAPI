@@ -11,7 +11,7 @@ namespace PersonalFinanceAPI.Controllers
     public class ExpensesController(ExpenseService service) : ControllerBase
     {
         private readonly ExpenseService _service = service;
-        
+
         [HttpGet]
         public async Task<ExpenseResponse[]> GetGroups()
         {
@@ -42,7 +42,7 @@ namespace PersonalFinanceAPI.Controllers
         public async Task<IResult> DeleteExpense(int id)
         {
             var success = await _service.DeleteExpenseById(id);
-            return success ? Results.Ok(): Results.NotFound("Record not found");
+            return success ? Results.Ok() : Results.NotFound("Record not found");
         }
 
 
@@ -50,7 +50,20 @@ namespace PersonalFinanceAPI.Controllers
         public async Task<IResult> DeleteAllExpenses()
         {
             var success = await _service.DeleteAll();
-            return success ? Results.Ok(): Results.NotFound("There is no record in database");
+            return success ? Results.Ok() : Results.NotFound("There is no record in database");
+        }
+        
+        [HttpPut("{expenseId:int}/add-to-group/{groupId:int}")]
+        public async Task<IResult> AddExpenseToGroup([FromRoute] int expenseId, [FromRoute] int groupId)
+        {
+            bool succesUpdate = await _service.AddExpenseToGroup(expenseId, groupId);
+            
+            if (!succesUpdate)
+                return Results.BadRequest("Invalid expenseID or groupID");
+
+            var updatedExpense = await _service.GetExpense(expenseId);
+
+            return Results.Ok(updatedExpense);
         }
     }
 }
