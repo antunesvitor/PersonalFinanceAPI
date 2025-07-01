@@ -11,7 +11,7 @@ public class Expense
     public DateTime? Date { get; set; }
     [Required]
     public string Description { get; set; }
-    public int GroupID { get; set; }
+    public int? GroupID { get; set; }
 
     public Group? Group { get; set; }
 

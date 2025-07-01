@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using PersonalFinanceAPI.Data;
 using PersonalFinanceAPI.DTOs;
 using PersonalFinanceAPI.Models;
-using SQLitePCL;
 
 namespace PersonalFinanceAPI.Services;
 

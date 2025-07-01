@@ -11,7 +11,7 @@ public record ExpenseResponse(
     decimal Value,
     DateTime Date,
     string Description,
-    int GroupId,
+    int? GroupId,
     string GroupName
 )
 {
@@ -31,7 +31,7 @@ public record ExpenseResponse(
 public record CreateExpenseRequest(
     decimal Value,
     DateTime? Date,
-    int GroupId,
+    int? GroupId,
     string Description
 )
 {
