@@ -52,16 +52,29 @@ namespace PersonalFinanceAPI.Controllers
             var success = await _service.DeleteAll();
             return success ? Results.Ok() : Results.NotFound("There is no record in database");
         }
-        
+
         [HttpPut("{expenseId:int}/add-to-group/{groupId:int}")]
         public async Task<IResult> AddExpenseToGroup([FromRoute] int expenseId, [FromRoute] int groupId)
         {
             bool succesUpdate = await _service.AddExpenseToGroup(expenseId, groupId);
-            
+
             if (!succesUpdate)
                 return Results.BadRequest("Invalid expenseID or groupID");
 
             var updatedExpense = await _service.GetExpense(expenseId);
+
+            return Results.Ok(updatedExpense);
+        }
+        
+        [HttpPut("{id:int}")]
+        public async Task<IResult> AddExpenseToGroup([FromRoute] int id, [FromBody] CreateExpenseRequest expense)
+        {
+            bool succesUpdate = await _service.UpdateExpense(id, expense);
+            
+            if (!succesUpdate)
+                return Results.BadRequest("Invalid id");
+
+            var updatedExpense = await _service.GetExpense(id);
 
             return Results.Ok(updatedExpense);
         }

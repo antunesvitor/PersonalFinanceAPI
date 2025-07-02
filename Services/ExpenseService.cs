@@ -62,6 +62,20 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
         if (expenseDb is null || group is null) return false;
 
         expenseDb.GroupID = groupId;
+
+        int rowsAffected = await _context.SaveChangesAsync();
+
+        return rowsAffected > 0;
+    }
+    
+    public async Task<bool> UpdateExpense(int expenseId, CreateExpenseRequest expense)
+    {
+        var expenseDb = await _context.Expenses.FirstOrDefaultAsync(x => x.Id == expenseId);
+
+        if (expenseDb is null) return false;
+
+        expenseDb.Description = expense.Description;
+        expenseDb.GroupID = expense.GroupId;
         
         int rowsAffected = await _context.SaveChangesAsync();
 
@@ -70,13 +84,13 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
 
     public async Task<bool> DeleteAll()
     {
-        #if DEBUG
-            // Only allow in development
-            int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
+#if DEBUG
+        // Only allow in development
+        int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
 
-            return rowsAffected > 0;
-        #else
+        return rowsAffected > 0;
+#else
             throw new InvalidOperationException("Bulk delete not allowed in production");
-        #endif
+#endif
     }
 }
