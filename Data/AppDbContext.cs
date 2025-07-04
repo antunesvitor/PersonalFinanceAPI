@@ -31,7 +31,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.Property(e => e.Description)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(500);
 
             entity.HasOne(e => e.Group)
                 .WithMany(e => e.Expenses)

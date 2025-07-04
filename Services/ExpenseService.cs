@@ -84,13 +84,13 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
 
     public async Task<bool> DeleteAll()
     {
-#if DEBUG
-        // Only allow in development
-        int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
+        #if DEBUG
+            // Only allow in development
+            int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
 
-        return rowsAffected > 0;
-#else
+            return rowsAffected > 0;
+        #else
             throw new InvalidOperationException("Bulk delete not allowed in production");
-#endif
+        #endif
     }
 }
