@@ -16,16 +16,15 @@ public record ExpenseResponse(
 )
 {
     public ExpenseResponse(Expense expense)
-        : this (
-            expense.Id, 
-            expense.Value, 
-            expense.Date ?? DateTime.Now, 
+        : this(
+            expense.Id,
+            expense.Value,
+            expense.Date ?? DateTime.Now,
             expense.Description,
-            expense.GroupID, 
+            expense.GroupID,
             expense.Group?.Name ?? "-")
     { }
 }
-
 
 // Request DTOs - what clients send
 public record CreateExpenseRequest(
@@ -35,7 +34,7 @@ public record CreateExpenseRequest(
     string Description
 )
 {
-      public DateTime EffectiveDate => Date ?? DateTime.Now;
+    public DateTime EffectiveDate => Date ?? DateTime.Now;
 }
 
 public record UpdateExpenseRequest(
@@ -43,3 +42,11 @@ public record UpdateExpenseRequest(
     DateTime Date,
     int GroupId
 );
+
+public record ListExpensesResquest
+{
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+};

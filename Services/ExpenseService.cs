@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PersonalFinanceAPI.Data;
 using PersonalFinanceAPI.DTOs;
+using PersonalFinanceAPI.DTOs.Generics;
 using PersonalFinanceAPI.Models;
 
 namespace PersonalFinanceAPI.Services;
@@ -39,12 +40,33 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
         return expense is not null ? new ExpenseResponse(expense) : null;
     }
 
-    public async Task<ExpenseResponse[]> GetExpenses()
+    public async Task<PagedResponse<ExpenseResponse>> GetExpenses(ListExpensesResquest request)
     {
-        var expenses = _context.Expenses.Include(x => x.Group).ToArray();
-        var expensesDTO = expenses.Select(x => new ExpenseResponse(x)).ToArray();
+        var query = _context.Expenses.Include(x => x.Group).AsQueryable();
 
-        return expensesDTO;
+        if (request.StartDate.HasValue)
+            query = query.Where(x => x.Date >= request.StartDate.Value);
+
+        if (request.EndDate.HasValue)
+            query = query.Where(x => x.Date <= request.EndDate.Value);
+
+        var totalRecords = await query.CountAsync();
+
+        var expenses = await query
+                .OrderByDescending(x => x.Date)
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(e => new ExpenseResponse(e))
+                .ToListAsync();
+
+        var response = new PagedResponse<ExpenseResponse>(
+            expenses,
+            request.Page,
+            request.PageSize,
+            totalRecords
+        );
+
+        return response;
     }
 
     public async Task<bool> DeleteExpenseById(int id)
@@ -67,7 +89,7 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
 
         return rowsAffected > 0;
     }
-    
+
     public async Task<bool> UpdateExpense(int expenseId, CreateExpenseRequest expense)
     {
         var expenseDb = await _context.Expenses.FirstOrDefaultAsync(x => x.Id == expenseId);
@@ -76,7 +98,7 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
 
         expenseDb.Description = expense.Description;
         expenseDb.GroupID = expense.GroupId;
-        
+
         int rowsAffected = await _context.SaveChangesAsync();
 
         return rowsAffected > 0;
@@ -84,13 +106,13 @@ public class ExpenseService(AppDbContext context, GroupService groupService)
 
     public async Task<bool> DeleteAll()
     {
-        #if DEBUG
-            // Only allow in development
-            int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
+#if DEBUG
+        // Only allow in development
+        int rowsAffected = await context.Expenses.ExecuteDeleteAsync();
 
-            return rowsAffected > 0;
-        #else
+        return rowsAffected > 0;
+#else
             throw new InvalidOperationException("Bulk delete not allowed in production");
-        #endif
+#endif
     }
 }
