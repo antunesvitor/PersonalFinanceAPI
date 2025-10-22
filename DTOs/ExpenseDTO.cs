@@ -12,7 +12,7 @@ public record ExpenseResponse(
     DateTime Date,
     string Description,
     int? GroupId,
-    string GroupName
+    string? GroupName
 )
 {
     public ExpenseResponse(Expense expense)
@@ -22,7 +22,7 @@ public record ExpenseResponse(
             expense.Date ?? DateTime.Now,
             expense.Description,
             expense.GroupID,
-            expense.Group?.Name ?? "-")
+            expense.Group?.Name)
     { }
 }
 
